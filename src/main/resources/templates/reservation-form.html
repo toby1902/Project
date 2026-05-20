@@ -58,7 +58,7 @@
                                     <input class="form-control"
                                            th:field="*{nomComplet}"
                                            maxlength="120"
-                                           pattern="[A-Za-zÀ-ÖØ-öø-ÿ' -]{2,120}"
+                                           pattern="[A-Za-zÀ-ÖØ-öø-ÿ]+([ '-][A-Za-zÀ-ÖØ-öø-ÿ]+)*"
                                            title="Utilisez uniquement des lettres, espaces, apostrophes ou tirets.">
                                     <div class="text-danger small mt-1" th:errors="*{nomComplet}"></div>
                                 </div>
@@ -66,15 +66,21 @@
                                     <label class="form-label">Telephone</label>
                                     <input class="form-control"
                                            th:field="*{telephone}"
-                                           maxlength="20"
+                                           maxlength="13"
                                            inputmode="tel"
-                                           pattern="\+?[0-9 ]{8,20}"
-                                           title="Saisissez entre 8 et 20 chiffres, avec espaces et un + eventuel.">
+                                           pattern="(0|\+261)(32|33|34|38)[0-9]{7}"
+                                           title="Format malgache attendu : 032/033/034/038 suivi de 7 chiffres, ou +261.">
                                     <div class="text-danger small mt-1" th:errors="*{telephone}"></div>
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Email</label>
-                                    <input type="email" class="form-control" th:field="*{email}" maxlength="120" inputmode="email">
+                                    <input type="email"
+                                           class="form-control"
+                                           th:field="*{email}"
+                                           maxlength="120"
+                                           inputmode="email"
+                                           pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}"
+                                           oninput="this.value = this.value.toLowerCase()">
                                     <div class="text-danger small mt-1" th:errors="*{email}"></div>
                                 </div>
                                 <div class="col-md-6">
@@ -110,7 +116,7 @@
                                            th:field="*{libelleAvance}"
                                            placeholder="Exemple : Acompte reservation chambre 201"
                                            maxlength="120"
-                                           pattern="[A-Za-zÀ-ÖØ-öø-ÿ0-9'()\\- ,.]{3,120}"
+                                           pattern="[A-Za-zÀ-ÖØ-öø-ÿ0-9'()\- ,.]{3,120}"
                                            title="Utilisez seulement lettres, chiffres, espaces et ponctuation simple.">
                                     <div class="text-danger small mt-1" th:errors="*{libelleAvance}"></div>
                                 </div>
@@ -127,10 +133,10 @@
                                     <label class="form-label">Numero Mobile Money utilise pour l'avance</label>
                                     <input class="form-control"
                                            th:field="*{telephonePaiementMobile}"
-                                           maxlength="20"
+                                           maxlength="13"
                                            inputmode="tel"
-                                           pattern="\+?[0-9 ]{8,20}"
-                                           title="Saisissez le numero du portefeuille Mobile Money.">
+                                           pattern="(0|\+261)(32|33|34|38)[0-9]{7}"
+                                           title="Saisissez un numero Mobile Money au format malgache.">
                                     <div class="text-danger small mt-1" th:errors="*{telephonePaiementMobile}"></div>
                                     <div class="text-danger small mt-1" th:errors="*{telephoneMobileMoneyValide}"></div>
                                 </div>
@@ -175,6 +181,33 @@
     const modePaiementSelect = document.getElementById('modePaiementAvance');
     const mobileMoneyWrapper = document.getElementById('mobileMoneyWrapper');
     const telephoneMobileInput = document.getElementById('telephonePaiementMobile');
+    const nomCompletInput = document.getElementById('nomComplet');
+    const telephoneInput = document.getElementById('telephone');
+
+    function nettoyerNom(inputElement) {
+        if (!inputElement) {
+            return;
+        }
+        inputElement.value = inputElement.value
+            .replace(/[^A-Za-zÀ-ÖØ-öø-ÿ' -]/g, '')
+            .replace(/\s{2,}/g, ' ')
+            .replace(/-{2,}/g, '-')
+            .replace(/'{2,}/g, "'");
+    }
+
+    function nettoyerTelephoneMalgache(inputElement) {
+        if (!inputElement) {
+            return;
+        }
+        const commenceParPlus = inputElement.value.startsWith('+');
+        let valeur = inputElement.value.replace(/[^\d+]/g, '');
+        if (commenceParPlus) {
+            valeur = '+' + valeur.replace(/\+/g, '').replace(/^\+/, '');
+        } else {
+            valeur = valeur.replace(/\+/g, '');
+        }
+        inputElement.value = valeur;
+    }
 
     function calculerEstimation() {
         const option = chambreSelect.options[chambreSelect.selectedIndex];
@@ -197,6 +230,15 @@
     chambreSelect.addEventListener('change', calculerEstimation);
     arriveeInput.addEventListener('change', calculerEstimation);
     departInput.addEventListener('change', calculerEstimation);
+    nomCompletInput.addEventListener('input', function () {
+        nettoyerNom(nomCompletInput);
+    });
+    telephoneInput.addEventListener('input', function () {
+        nettoyerTelephoneMalgache(telephoneInput);
+    });
+    telephoneMobileInput.addEventListener('input', function () {
+        nettoyerTelephoneMalgache(telephoneMobileInput);
+    });
     modePaiementSelect.addEventListener('change', function () {
         const mobileMoney = modePaiementSelect.value === 'MOBILE_MONEY';
         mobileMoneyWrapper.classList.toggle('d-none', !mobileMoney);
@@ -206,6 +248,8 @@
         }
     });
     calculerEstimation();
+    nettoyerNom(nomCompletInput);
+    nettoyerTelephoneMalgache(telephoneInput);
     modePaiementSelect.dispatchEvent(new Event('change'));
 </script>
 </body>

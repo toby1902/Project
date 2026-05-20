@@ -303,15 +303,15 @@
                             <label class="form-label">Telephone</label>
                             <input class="form-control"
                                    th:field="*{telephone}"
-                                   maxlength="20"
+                                   maxlength="13"
                                    inputmode="tel"
-                                   pattern="\+?[0-9 ]{8,20}"
-                                   title="Saisissez entre 8 et 20 chiffres, avec espaces et un + eventuel.">
+                                   pattern="(0|\+261)(32|33|34|38)[0-9]{7}"
+                                   title="Format malgache attendu : 032/033/034/038 suivi de 7 chiffres, ou +261.">
                             <div class="text-danger small mt-1" th:errors="*{telephone}"></div>
                         </div>
                         <div class="col-12">
                             <label class="form-label">Email</label>
-                            <input type="email" class="form-control" th:field="*{email}" maxlength="120" inputmode="email">
+                            <input type="email" class="form-control" th:field="*{email}" maxlength="120" inputmode="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}" oninput="this.value = this.value.toLowerCase()">
                             <div class="text-danger small mt-1" th:errors="*{email}"></div>
                         </div>
                         <div class="col-md-6">

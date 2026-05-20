@@ -8,6 +8,7 @@ public class LoginRequest {
 
     @Email(message = "Veuillez saisir un email valide.")
     @NotBlank(message = "L'email est obligatoire.")
+    @jakarta.validation.constraints.Pattern(regexp = "^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$", message = "L'email doit etre saisi en minuscules.")
     private String email;
 
     @NotBlank(message = "Le mot de passe est obligatoire.")

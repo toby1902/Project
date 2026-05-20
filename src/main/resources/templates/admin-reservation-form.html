@@ -47,17 +47,17 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Nom complet</label>
-                                <input class="form-control" th:field="*{nomComplet}" maxlength="120" pattern="[A-Za-zÀ-ÖØ-öø-ÿ' -]{2,120}" title="Utilisez uniquement des lettres, espaces, apostrophes ou tirets.">
+                                <input class="form-control" th:field="*{nomComplet}" maxlength="120" pattern="[A-Za-zÀ-ÖØ-öø-ÿ]+([ '-][A-Za-zÀ-ÖØ-öø-ÿ]+)*" title="Utilisez uniquement des lettres, espaces, apostrophes ou tirets.">
                                 <div class="text-danger small mt-1" th:errors="*{nomComplet}"></div>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Telephone</label>
-                                <input class="form-control" th:field="*{telephone}" maxlength="20" inputmode="tel" pattern="\+?[0-9 ]{8,20}" title="Saisissez entre 8 et 20 chiffres, avec espaces et un + eventuel.">
+                                <input class="form-control" th:field="*{telephone}" maxlength="13" inputmode="tel" pattern="(0|\+261)(32|33|34|38)[0-9]{7}" title="Format malgache attendu : 032/033/034/038 suivi de 7 chiffres, ou +261.">
                                 <div class="text-danger small mt-1" th:errors="*{telephone}"></div>
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Email</label>
-                                <input type="email" class="form-control" th:field="*{email}" maxlength="120" inputmode="email">
+                                <input type="email" class="form-control" th:field="*{email}" maxlength="120" inputmode="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}" oninput="this.value = this.value.toLowerCase()">
                                 <div class="text-danger small mt-1" th:errors="*{email}"></div>
                             </div>
                             <div class="col-md-6">
@@ -89,7 +89,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Libelle de l'avance</label>
-                                <input class="form-control" th:field="*{libelleAvance}" placeholder="Exemple : Acompte reservation chambre 201" maxlength="120" pattern="[A-Za-zÀ-ÖØ-öø-ÿ0-9'()\\- ,.]{3,120}" title="Utilisez seulement lettres, chiffres, espaces et ponctuation simple.">
+                                <input class="form-control" th:field="*{libelleAvance}" placeholder="Exemple : Acompte reservation chambre 201" maxlength="120" pattern="[A-Za-zÀ-ÖØ-öø-ÿ0-9'()\- ,.]{3,120}" title="Utilisez seulement lettres, chiffres, espaces et ponctuation simple.">
                                 <div class="text-danger small mt-1" th:errors="*{libelleAvance}"></div>
                             </div>
                             <div class="col-md-6">
@@ -102,7 +102,7 @@
                             </div>
                             <div class="col-12 d-none" id="adminMobileMoneyWrapper">
                                 <label class="form-label">Numero Mobile Money utilise pour l'avance</label>
-                                <input class="form-control" th:field="*{telephonePaiementMobile}" maxlength="20" inputmode="tel" pattern="\+?[0-9 ]{8,20}" title="Saisissez le numero du portefeuille Mobile Money.">
+                                <input class="form-control" th:field="*{telephonePaiementMobile}" maxlength="13" inputmode="tel" pattern="(0|\+261)(32|33|34|38)[0-9]{7}" title="Saisissez un numero Mobile Money au format malgache.">
                                 <div class="text-danger small mt-1" th:errors="*{telephonePaiementMobile}"></div>
                             </div>
                             <div class="text-danger small mt-1" th:errors="*{telephoneMobileMoneyValide}"></div>
@@ -148,6 +148,33 @@
     const adminModePaiementSelect = document.getElementById('adminModePaiementAvance');
     const adminMobileMoneyWrapper = document.getElementById('adminMobileMoneyWrapper');
     const adminTelephoneMobileInput = document.getElementById('telephonePaiementMobile');
+    const adminNomCompletInput = document.getElementById('nomComplet');
+    const adminTelephoneInput = document.getElementById('telephone');
+
+    function nettoyerNomAdmin(inputElement) {
+        if (!inputElement) {
+            return;
+        }
+        inputElement.value = inputElement.value
+            .replace(/[^A-Za-zÀ-ÖØ-öø-ÿ' -]/g, '')
+            .replace(/\s{2,}/g, ' ')
+            .replace(/-{2,}/g, '-')
+            .replace(/'{2,}/g, "'");
+    }
+
+    function nettoyerTelephoneMalgacheAdmin(inputElement) {
+        if (!inputElement) {
+            return;
+        }
+        const commenceParPlus = inputElement.value.startsWith('+');
+        let valeur = inputElement.value.replace(/[^\d+]/g, '');
+        if (commenceParPlus) {
+            valeur = '+' + valeur.replace(/\+/g, '').replace(/^\+/, '');
+        } else {
+            valeur = valeur.replace(/\+/g, '');
+        }
+        inputElement.value = valeur;
+    }
 
     function calculerEstimationAdmin() {
         const option = adminChambreSelect.options[adminChambreSelect.selectedIndex];
@@ -176,8 +203,19 @@
     adminChambreSelect.addEventListener('change', calculerEstimationAdmin);
     adminArriveeInput.addEventListener('change', calculerEstimationAdmin);
     adminDepartInput.addEventListener('change', calculerEstimationAdmin);
+    adminNomCompletInput.addEventListener('input', function () {
+        nettoyerNomAdmin(adminNomCompletInput);
+    });
+    adminTelephoneInput.addEventListener('input', function () {
+        nettoyerTelephoneMalgacheAdmin(adminTelephoneInput);
+    });
+    adminTelephoneMobileInput.addEventListener('input', function () {
+        nettoyerTelephoneMalgacheAdmin(adminTelephoneMobileInput);
+    });
     adminModePaiementSelect.addEventListener('change', gererChampMobileMoneyAdmin);
     calculerEstimationAdmin();
+    nettoyerNomAdmin(adminNomCompletInput);
+    nettoyerTelephoneMalgacheAdmin(adminTelephoneInput);
     gererChampMobileMoneyAdmin();
 </script>
 </body>

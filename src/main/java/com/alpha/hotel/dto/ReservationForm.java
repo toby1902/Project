@@ -1,7 +1,7 @@
 package com.alpha.hotel.dto;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
@@ -15,15 +15,16 @@ public class ReservationForm {
 
     @NotBlank(message = "Le nom complet du client est obligatoire.")
     @Size(min = 2, max = 120, message = "Le nom complet doit contenir entre 2 et 120 caracteres.")
-    @Pattern(regexp = "^[A-Za-zÀ-ÖØ-öø-ÿ' -]+$", message = "Le nom complet ne doit contenir que des lettres, espaces, apostrophes ou tirets.")
+    @Pattern(regexp = "^[\\p{L}]+(?:[ '\\-][\\p{L}]+)*$", message = "Le nom complet ne doit contenir que des lettres, espaces, apostrophes ou tirets.")
     private String nomComplet;
 
     @Email(message = "Veuillez renseigner un email valide.")
     @NotBlank(message = "L'email est obligatoire.")
+    @Pattern(regexp = "^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$", message = "L'email doit etre en minuscules et dans un format valide.")
     private String email;
 
     @NotBlank(message = "Le telephone est obligatoire.")
-    @Pattern(regexp = "^\\+?[0-9 ]{8,20}$", message = "Le telephone ne doit contenir que des chiffres, espaces et eventuellement un +.")
+    @Pattern(regexp = "^(?:0|\\+261)(32|33|34|38)\\d{7}$", message = "Le telephone doit respecter le format malgache : 032/033/034/038 suivi de 7 chiffres, ou +261.")
     private String telephone;
 
     @NotNull(message = "Veuillez choisir une chambre.")
@@ -39,14 +40,14 @@ public class ReservationForm {
 
     @NotBlank(message = "Le libelle de l'avance est obligatoire.")
     @Size(min = 3, max = 120, message = "Le libelle doit contenir entre 3 et 120 caracteres.")
-    @Pattern(regexp = "^[A-Za-zÀ-ÖØ-öø-ÿ0-9'()\\- ,.]+$", message = "Le libelle contient des caracteres non autorises.")
+    @Pattern(regexp = "^[\\p{L}0-9'()\\- ,.]+$", message = "Le libelle contient des caracteres non autorises.")
     private String libelleAvance;
 
     @NotBlank(message = "Le mode de paiement de l'avance est obligatoire.")
     @Pattern(regexp = "^(MOBILE_MONEY|CHEQUE|CARTE_BANCAIRE|ESPECE)$", message = "Le mode de paiement de l'avance est invalide.")
     private String modePaiementAvance;
 
-    @Pattern(regexp = "^$|^\\+?[0-9 ]{8,20}$", message = "Le numero Mobile Money ne doit contenir que des chiffres, espaces et eventuellement un +.")
+    @Pattern(regexp = "^$|^(?:0|\\+261)(32|33|34|38)\\d{7}$", message = "Le numero Mobile Money doit respecter le format malgache : 032/033/034/038 suivi de 7 chiffres, ou +261.")
     private String telephonePaiementMobile;
 
     public String getNomComplet() {

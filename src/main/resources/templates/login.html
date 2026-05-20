@@ -40,7 +40,9 @@
                                    placeholder="admin@alphahotel.com"
                                    maxlength="120"
                                    autocomplete="username"
-                                   inputmode="email">
+                                   inputmode="email"
+                                   pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}"
+                                   oninput="this.value = this.value.toLowerCase()">
                             <div class="text-danger small mt-1" th:errors="*{email}"></div>
                         </div>
                         <div class="mb-4">

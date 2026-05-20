@@ -14,15 +14,16 @@ public class ReservationUpdateForm {
 
     @NotBlank(message = "Le nom complet du client est obligatoire.")
     @Size(min = 2, max = 120, message = "Le nom complet doit contenir entre 2 et 120 caracteres.")
-    @Pattern(regexp = "^[A-Za-zÀ-ÖØ-öø-ÿ' -]+$", message = "Le nom complet ne doit contenir que des lettres, espaces, apostrophes ou tirets.")
+    @Pattern(regexp = "^[\\p{L}]+(?:[ '\\-][\\p{L}]+)*$", message = "Le nom complet ne doit contenir que des lettres, espaces, apostrophes ou tirets.")
     private String nomComplet;
 
     @Email(message = "Veuillez renseigner un email valide.")
     @NotBlank(message = "L'email est obligatoire.")
+    @Pattern(regexp = "^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$", message = "L'email doit etre en minuscules et dans un format valide.")
     private String email;
 
     @NotBlank(message = "Le telephone est obligatoire.")
-    @Pattern(regexp = "^\\+?[0-9 ]{8,20}$", message = "Le telephone ne doit contenir que des chiffres, espaces et eventuellement un +.")
+    @Pattern(regexp = "^(?:0|\\+261)(32|33|34|38)\\d{7}$", message = "Le telephone doit respecter le format malgache : 032/033/034/038 suivi de 7 chiffres, ou +261.")
     private String telephone;
 
     @NotNull(message = "Veuillez choisir une chambre.")
