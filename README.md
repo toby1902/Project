@@ -214,6 +214,22 @@ CREATE DATABASE "alpha_hotelDb";
 
 Configuration principale :
 - [application.properties](</c:/Users/lebit's/Desktop/JAVA WEB/src/main/resources/application.properties>)
+- [application-example.properties](</c:/Users/lebit's/Desktop/JAVA WEB/src/main/resources/application-example.properties>)
+
+Pour GitHub, les secrets ne sont plus stockes en dur dans `application.properties`.
+Le projet utilise des variables d'environnement avec valeurs par defaut.
+
+Variables principales possibles :
+- `DB_URL`
+- `DB_USERNAME`
+- `DB_PASSWORD`
+- `MAIL_HOST`
+- `MAIL_PORT`
+- `MAIL_USERNAME`
+- `MAIL_PASSWORD`
+- `APP_MAIL_FROM`
+- `APP_MAIL_NOTIFICATION_ADMIN`
+- `APP_JWT_SECRET`
 
 ## 7. Lancement du projet
 
